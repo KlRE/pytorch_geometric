@@ -9,6 +9,7 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.data.datapipes import DatasetAdapter
 from torch_geometric.typing import TensorFrame, torch_frame
 
+import numpy as np
 
 class Collater:
     def __init__(
@@ -45,6 +46,8 @@ class Collater:
             return type(elem)(*(self(s) for s in zip(*batch)))
         elif isinstance(elem, Sequence) and not isinstance(elem, str):
             return [self(s) for s in zip(*batch)]
+        elif isinstance(elem, np.ndarray) or isinstance(elem, np.bool_):
+            return np.stack(batch)
 
         raise TypeError(f"DataLoader found invalid type: '{type(elem)}'")
 
